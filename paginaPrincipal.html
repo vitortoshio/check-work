@@ -13,20 +13,24 @@
         padding: 0;
         display: flex;
         justify-content: center;
+        background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQLElpAEtpR4RlDPT7all0E0ebTTNRs6fvxJYzZZNITg&s);
         align-items: center;
-        height: 100vh;
+        min-height: 100vh; 
     }
+    
     .container {
         max-width: 600px;
         padding: 20px;
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        
     }
     h1 {
         text-align: center;
         color: #333;
         margin-bottom: 20px;
+        
     }
     .task-input {
         display: flex;
@@ -58,6 +62,8 @@
         list-style-type: none;
         padding: 0;
         margin: 0;
+        max-height: 300px; /* Altura máxima do contêiner de tarefas */
+        overflow-y: auto; /* Adiciona rolagem vertical quando necessário */
     }
     .task-item {
         position: relative;
@@ -68,6 +74,9 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin-bottom: 10px;
         transition: transform 0.3s ease;
+        display: flex;
+        justify-content: space-between; /* Alinha os botões de editar e favoritar */
+        align-items: center; /* Alinha os botões de editar e favoritar */
     }
     .task-item:hover {
         transform: translateY(-4px);
@@ -77,10 +86,6 @@
         border-left-color: #48ff00;
     }
     .delete-btn {
-        position: absolute;
-        top: 50%;
-        right: 20px;
-        transform: translateY(-50%);
         padding: 8px 12px;
         background-color: #e74c3c;
         color: #fff;
@@ -96,6 +101,25 @@
     }
     .task-item:hover .delete-btn {
         display: block;
+    }
+    .edit-btn,
+    .favorite-btn {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-right: 5px;
+        transition: background-color 0.3s ease;
+    }
+    .edit-btn:hover,
+    .favorite-btn:hover {
+        background-color: #0056b3;
+    }
+    .favorited { /* Estilo para tarefa favoritada */
+        background-color: #ffffcc; /* Cor de fundo amarela */
     }
 </style>
 </head>
@@ -133,11 +157,28 @@
             taskItem.appendChild(checkbox);
             taskItem.appendChild(textNode);
             taskItem.classList.add("task-item");
+
+            var editButton = document.createElement("button"); // Botão de editar
+            editButton.innerText = "Editar";
+            editButton.classList.add("edit-btn");
+            editButton.onclick = function() {
+                editTask(taskItem);
+            };
+            taskItem.appendChild(editButton);
+
+            var favoriteButton = document.createElement("button"); // Botão de favoritar
+            favoriteButton.innerText = "Favoritar";
+            favoriteButton.classList.add("favorite-btn");
+            favoriteButton.onclick = function() {
+                favoriteTask(taskItem);
+            };
+            taskItem.appendChild(favoriteButton);
+
             var deleteButton = document.createElement("button");
             deleteButton.innerText = "Apagar";
             deleteButton.classList.add("delete-btn");
             deleteButton.onclick = function() {
-                deleteTask(this);
+                deleteTask(taskItem);
             };
             taskItem.appendChild(deleteButton);
             document.getElementById("pending-tasks").appendChild(taskItem);
@@ -156,14 +197,22 @@
         }
     }
 
-    function deleteTask(button) {
-        var taskItem = button.parentNode;
+    function deleteTask(taskItem) {
         taskItem.remove();
+    }
+
+    function editTask(taskItem) {
+        var textNode = taskItem.childNodes[1]; // O texto está no segundo nó filho
+        var newText = prompt("Editar tarefa:", textNode.textContent);
+        if (newText !== null) {
+            textNode.textContent = newText;
+        }
+    }
+
+    function favoriteTask(taskItem) {
+        taskItem.classList.toggle("favorited"); // Adiciona ou remove a classe "favorited"
     }
 </script>
 
 </body>
 </html>
-
-
-
